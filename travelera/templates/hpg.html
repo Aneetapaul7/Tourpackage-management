@@ -1,0 +1,403 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TravelEra</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="{% static 'css/style.css' %}" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark text-white ">
+
+  <div class="container"><!-- Navigation -->
+
+    <a class="navbar-brand" href="#home">
+      <i class="fas fa-mountain"></i> TravelEra
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="{% url  'home' %}">HOME</a></li>
+        <li class="nav-item"><a class="nav-link" href="#about">ABOUT</a></li>
+        <li class="nav-item"><a class="nav-link" href="#service">SERVICE</a></li>
+
+        <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
+        <li class="nav-item"><a class="nav-link" href="#contact">CONTACT</a></li>
+        <li class="nav-item me-3"><a class="btn btn-outline-light" href="{% url 'register' %}">Register</a></li>
+        <li class="nav-item  "><a class="btn btn-outline-light  " href="{% url 'login' %}">Login</a></li>
+
+      </ul>
+    </div>
+  </div>
+    <a href="/admin" class="text-light text-decoration-none px-3 py-2">
+  <i class="fas fa-user-shield"></i>
+</a>
+
+</nav>
+  {% block content %}
+<!-- Hero Section Carousel -->
+<section id="home" class="hero-carousel">
+  <div id="adventureCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="2000">
+
+    <!-- Indicators -->
+    <div class="carousel-indicators">
+      <button type="button" data-bs-target="#adventureCarousel"  data-bs-slide-to="0" class="active"></button>
+      <button type="button" data-bs-target="#adventureCarousel" data-bs-slide-to="1"></button>
+      <button type="button" data-bs-target="#adventureCarousel" data-bs-slide-to="2"></button>
+    </div>
+
+    <!-- Slides -->
+    <div class="carousel-inner">
+      <div class="carousel-item active slide-1">
+        <div class="carousel-content">
+          <div class="container">
+            <p class="subtitle">Discover the Colorful World</p>
+            <h1>NEW TRIP</h1>
+            <p class="lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            <a class="btn btn-discover"  href="{% url 'register' %}">Discover Now</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="carousel-item slide-2">
+        <div class="carousel-content">
+          <div class="container">
+            <p class="subtitle">Explore Amazing Places</p>
+            <h1>WILD ADVENTURE</h1>
+            <p class="lead">Experience the thrill of nature's beauty and discover hidden gems that will take your breath away.</p>
+           <a class="btn btn-discover"  href="{% url 'register' %}">Explore Now</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="carousel-item slide-3">
+        <div class="carousel-content">
+          <div class="container">
+            <p class="subtitle">Journey Beyond Limits</p>
+            <h1>EPIC JOURNEY</h1>
+            <p class="lead">Push your boundaries and embark on journeys that challenge your spirit and reward your soul.</p>
+          <a class="btn btn-discover"  href="{% url 'register' %}">Start Journey</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#adventureCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#adventureCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon"></span>
+    </button>
+  </div>
+</section>
+
+
+
+
+
+<!-- About Section -->
+<section id="about" class="about-section section-padding">
+    <div class="container">
+        <div class="section-title">
+            <h2>Why Choose Us Your Travel partner</h2>
+            <p>Your gateway to extraordinary adventures and unforgettable memories</p>
+        </div>
+        <div class="about-content">
+            <div class="about-image">
+                <img src="{% static 'images/aabout.jpg' %}" alt="Adventure">
+            </div>
+            <div class="about-text">
+                <h3>Creating Extraordinary Travel Experiences Since Day One</h3>
+                <p>At TravelEra, we believe that travel is more than just visiting destinations – it's about creating life-changing experiences that broaden your horizons and connect you with the world's most incredible places and cultures.</p>
+                <p>Our expert team of travel enthusiasts carefully curates each tour package to ensure you experience the perfect blend of adventure, comfort, and authenticity. From breathtaking mountain expeditions to serene beach getaways, from cultural city tours to wildlife safaris, we handle every detail so you can focus on making memories.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- latest project on go -->
+
+
+<section class="destinations-section">
+    <div class="container">
+        <div class="section-title">
+            <h2>Our Destinations</h2>
+            <p>Choose Your Next Destination With Travelera </p>
+        </div>
+
+        {% if destinations %}
+        <div class="row justify-content-center">
+            {% for destination in destinations %}
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4">
+                <div class="card destination-card h-100" data-destination-id="{{ destination.id }}">
+                    <div class="destination-image">
+                        {% if destination.image %}
+                            <img src="{{ destination.image.url }}" class="card-img-top" alt="{{ destination.display_name }}">
+                        {% else %}
+                            <div class="placeholder-image">
+                                <span>No Image</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title destination-name">{{ destination.display_name }}</h5>
+                        <p class="card-text destination-duration">{{ destination.duration_text }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8">
+                <div class="alert alert-info">
+                    <h4>No destinations available at the moment</h4>
+                    <p>Please check back later or contact admin to add destinations.</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+
+<!-- Features Section -->
+<section id="service" class="section-padding">
+    <div class="container">
+        <div class="section-title">
+            <h2>Why Choose Our Tour Packages</h2>
+            <p>Discover the world with our exceptional travel experiences and personalized service.</p>
+        </div>
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <h4>Expert Local Guides</h4>
+                    <p>Our experienced local guides provide authentic insights and hidden gems that make your journey unforgettable and culturally enriching.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-concierge-bell"></i>
+                    </div>
+                    <h4>Premium Service</h4>
+                    <p>From luxury accommodations to seamless transportation, we ensure every detail of your trip is handled with utmost care and professionalism.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <h4>24/7 Travel Support</h4>
+                    <p>Our dedicated support team is available round the clock to assist you with any queries or emergencies during your travel adventure.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-route"></i>
+                    </div>
+                    <h4>Customized Itineraries</h4>
+                    <p>We create personalized travel plans tailored to your preferences, interests, and budget for a truly unique and memorable experience.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <h4>Award-Winning Excellence</h4>
+                    <p>Our commitment to outstanding service has earned us numerous travel industry awards and recognition from satisfied customers worldwide.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h4>Trusted by Travelers</h4>
+                    <p>Join thousands of happy travelers who have chosen us for their dream vacations and shared their amazing experiences and positive reviews.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+ <!-- FAQ Section -->
+    <section id="faq" class="section-padding">
+        <div class="container">
+            <div class="section-title">
+                <h2>Frequently Asked Questions</h2>
+                <p>Find answers to common questions about our tour services</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="accordion" id="faqAccordion">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#faq1">
+                                        What is included in the tour package?
+                                    </button>
+                                </h2>
+                            </div>
+                            <div id="faq1" class="collapse show" data-parent="#faqAccordion">
+                                <div class="card-body">
+                                    Our tour packages typically include accommodation, transportation, guided tours, and some meals. Specific inclusions vary by package.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#faq2">
+                                        How do I book a tour?
+                                    </button>
+                                </h2>
+                            </div>
+                            <div id="faq2" class="collapse" data-parent="#faqAccordion">
+                                <div class="card-body">
+                                    You can book a tour through our website, by phone, or by visiting our office. We accept various payment methods for your convenience.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#faq3">
+                                        What is your cancellation policy?
+                                    </button>
+                                </h2>
+                            </div>
+                            <div id="faq3" class="collapse" data-parent="#faqAccordion">
+                                <div class="card-body">
+                                    Cancellation policies vary by tour type and timing. Generally, cancellations made 30 days in advance receive full refunds.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<!-- Contact Section -->
+<section id="contact" class="contact-section section-padding bg-white text-dark py-5">
+    <div class="container">
+        <div class="section-title text-center mb-5">
+            <h2 class="text-dark">If you need, Just drop us a line</h2>
+            <p class="text-muted">Who are in extremely love with eco friendly system.</p>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="contact-form">
+                    <form method="post" action="{% url 'contact' %}" class="needs-validation" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Display form errors if any -->
+                        {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <strong>Error:</strong> Please correct the errors below.
+                            {{ form.errors }}
+                        </div>
+                        {% endif %}
+
+                        <!-- Display messages if any -->
+                        {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+
+                        <div class="form-row">
+                            <div class="form-group col-md-6 mb-3">  <!-- Added mb-3 for bottom margin -->
+                                {{ form.name }}
+                                {% if not form.name.value and not form.name.errors %}
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        document.getElementById('{{ form.name.id_for_label }}').placeholder = 'Enter your name';
+                                    });
+                                </script>
+                                {% endif %}
+                            </div>
+                            <div class="form-group col-md-6 mb-3">  <!-- Added mb-3 for bottom margin -->
+                                {{ form.email }}
+                                {% if not form.email.value and not form.email.errors %}
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        document.getElementById('{{ form.email.id_for_label }}').placeholder = 'Enter email address';
+                                    });
+                                </script>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">  <!-- Added mb-3 for bottom margin -->
+                            {{ form.subject }}
+                            {% if not form.subject.value and not form.subject.errors %}
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    document.getElementById('{{ form.subject.id_for_label }}').placeholder = 'Enter your subject';
+                                });
+                            </script>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group mb-4">  <!-- Added mb-4 for larger bottom margin -->
+                            {{ form.message }}
+                            {% if not form.message.value and not form.message.errors %}
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    document.getElementById('{{ form.message.id_for_label }}').placeholder = 'Enter your message';
+                                });
+                            </script>
+                            {% endif %}
+                        </div>
+
+                        <div class="text-center py-2">
+                            <button type="submit" class="btn btn-primary btn-lg px-4 py-2">
+                                Send Message <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% endblock %}
+
+
+
+
+<!-- Footer -->
+<footer class="bg-dark text-white text-center p-3 mt-4 ">
+  <p>© 2025 TravelEra | <a href="/admin" class="text-light">  Admin Login</a></p>
+</footer>
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/script.js' %}"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,299 @@
+<!-- package_detail.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                {% if package.image %}
+                <img src="{{ package.image.url }}" class="card-img-top gallery-image"
+                     style="max-height: 400px; object-fit: cover; cursor: pointer;"
+                     data-image="{{ package.image.url }}"
+                     data-caption="{{ package.title }} - Main Image"
+                     alt="{{ package.title }}">
+                {% endif %}
+                <div class="card-body">
+                    <h2 class="card-title">{{ package.title }}</h2>
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="badge bg-primary me-2">
+                            <i class="bi bi-geo-alt"></i> {{ package.destination }}
+                        </span>
+                        <span class="badge bg-success me-2">
+                            ${{ package.price }} / person
+                        </span>
+                        <span class="badge bg-info">
+                            {{ package.duration_days }} days
+                        </span>
+                    </div>
+                    <p class="card-text">{{ package.description }}</p>
+                </div>
+            </div>
+
+            <!-- Image Gallery -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+
+                    <span class="badge badge-light text-dark">
+                        <i class="bi bi-images"></i>
+                        {{ images|length }}{% if package.image %} + 1{% endif %} photos
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for image in images %}
+                        <div class="col-md-4 mb-3">
+                            <div class="gallery-item position-relative">
+                                <img src="{{ image.image.url }}"
+                                     class="img-fluid rounded gallery-image"
+                                     alt="{{ image.caption|default:package.title }}"
+                                     style="width: 100%; height: 200px; object-fit: cover; cursor: pointer;"
+                                     data-image="{{ image.image.url }}"
+                                     data-caption="{{ image.caption|default:package.title }}">
+                                <div class="gallery-overlay position-absolute d-flex align-items-center justify-content-center"
+                                     style="top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.3s ease; border-radius: 0.375rem;">
+                                    <i class="bi bi-zoom-in text-white" style="font-size: 2rem;"></i>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="col-12">
+                            <p class="text-muted text-center">No additional images available.</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card sticky-top" style="top: 20px;">
+                <div class="card-header">
+                    <h5>Book This Package</h5>
+                </div>
+                <div class="card-body">
+                    {% if package.is_active %}
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'create_booking' package.pk %}" class="btn btn-success btn-lg">
+                            <i class="bi bi-calendar-check"></i> Book Now
+                        </a>
+                    </div>
+                    <hr>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            Verified Vendor
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-credit-card text-primary me-2"></i>
+                            Secure Payment
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-headset text-info me-2"></i>
+                            24/7 Support
+                        </li>
+                    </ul>
+                    {% else %}
+                    <div class="alert alert-warning">
+                        This package is not currently available for booking.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Image Modal -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-0 position-absolute" style="top: 10px; right: 10px; z-index: 1060;">
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0 position-relative">
+                <!-- Loading spinner -->
+                <div id="imageLoader" class="position-absolute d-none" style="top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1055;">
+                    <div class="spinner-border text-light" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+
+                <!-- Main image -->
+                <img id="modalImage" class="img-fluid w-100" style="max-height: 80vh; object-fit: contain;" alt="">
+
+                <!-- Navigation arrows -->
+                <button class="btn btn-outline-light position-absolute nav-arrow"
+                        style="top: 50%; left: 20px; transform: translateY(-50%); z-index: 1055;"
+                        id="prevImage" type="button">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+                <button class="btn btn-outline-light position-absolute nav-arrow"
+                        style="top: 50%; right: 20px; transform: translateY(-50%); z-index: 1055;"
+                        id="nextImage" type="button">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+
+                <!-- Image counter -->
+                <div class="position-absolute" style="bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1055;">
+                    <span class="badge bg-dark" style="background: rgba(0,0,0,0.75) !important; color: white; padding: 8px 12px; font-size: 14px;" id="imageCounter">
+                        1 / 1
+                    </span>
+                </div>
+            </div>
+            <div class="modal-footer bg-dark border-0 text-center">
+                <p class="text-light mb-0" id="imageCaption">Image Caption</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.gallery-item {
+    overflow: hidden;
+    border-radius: 0.375rem;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+}
+
+.gallery-item:hover .gallery-overlay {
+    opacity: 1;
+}
+
+.nav-arrow {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-arrow:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.modal-xl {
+    max-width: 95vw;
+}
+
+#imageModal .modal-content {
+    background: rgba(0, 0, 0, 0.95) !important;
+    border: none;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize elements
+    const imageModal = document.getElementById('imageModal');
+    const modalImage = document.getElementById('modalImage');
+    const imageCaption = document.getElementById('imageCaption');
+    const imageCounter = document.getElementById('imageCounter');
+    const prevBtn = document.getElementById('prevImage');
+    const nextBtn = document.getElementById('nextImage');
+    const imageLoader = document.getElementById('imageLoader');
+    const galleryImages = document.querySelectorAll('.gallery-image');
+
+    // Initialize modal if Bootstrap is available
+    const modalInstance = typeof bootstrap !== 'undefined' ?
+        new bootstrap.Modal(imageModal) : null;
+
+    // Collect all images data
+    const images = Array.from(galleryImages).map(img => ({
+        src: img.dataset.image,
+        caption: img.dataset.caption || img.alt
+    }));
+
+    let currentImageIndex = 0;
+
+    // Show/hide loader
+    function toggleLoader(show) {
+        imageLoader.classList.toggle('d-none', !show);
+        modalImage.style.opacity = show ? '0' : '1';
+    }
+
+    // Update modal content
+    function updateModal(index) {
+        if (!images.length) return;
+
+        currentImageIndex = index;
+        const image = images[index];
+
+        toggleLoader(true);
+
+        // Preload image
+        const img = new Image();
+        img.onload = function() {
+            modalImage.src = image.src;
+            imageCaption.textContent = image.caption;
+            imageCounter.textContent = `${index + 1} / ${images.length}`;
+            toggleLoader(false);
+
+            // Toggle navigation arrows
+            [prevBtn, nextBtn].forEach(btn => btn.classList.toggle('d-none', images.length <= 1));
+        };
+        img.onerror = function() {
+            console.error('Failed to load image:', image.src);
+            toggleLoader(false);
+            imageCaption.textContent = "Failed to load image";
+        };
+        img.src = image.src;
+    }
+
+    // Handle image clicks
+    galleryImages.forEach((img, index) => {
+        img.addEventListener('click', () => {
+            currentImageIndex = index;
+            updateModal(index);
+            if (modalInstance) modalInstance.show();
+        });
+    });
+
+    // Navigation handlers
+    prevBtn.addEventListener('click', () => {
+        updateModal((currentImageIndex - 1 + images.length) % images.length);
+    });
+
+    nextBtn.addEventListener('click', () => {
+        updateModal((currentImageIndex + 1) % images.length);
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (!imageModal.classList.contains('show')) return;
+
+        switch(e.key) {
+            case 'ArrowLeft': prevBtn.click(); break;
+            case 'ArrowRight': nextBtn.click(); break;
+            case 'Escape': modalInstance?.hide(); break;
+        }
+    });
+
+    // Touch/swipe support
+    let touchStartX = 0;
+    modalImage.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+    });
+
+    modalImage.addEventListener('touchend', (e) => {
+        const touchEndX = e.changedTouches[0].clientX;
+        const diff = touchStartX - touchEndX;
+
+        if (Math.abs(diff) > 50) {
+            diff > 0 ? nextBtn.click() : prevBtn.click();
+        }
+    });
+
+    // Reset modal on close
+    imageModal.addEventListener('hidden.bs.modal', () => {
+        modalImage.src = '';
+        imageCaption.textContent = '';
+        imageCounter.textContent = '';
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Book {{ package.title }} | Travel Agency</title>
+    <!-- Bootstrap 4 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+        .card {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border: none;
+            margin-bottom: 20px;
+        }
+        .card-title {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        .booking-summary-card {
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+        }
+        #booking-summary p {
+            margin-bottom: 0.5rem;
+        }
+        .form-group label {
+            font-weight: 500;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            padding: 8px 20px;
+            font-weight: 500;
+        }
+        .btn-primary:hover {
+            background-color: #0069d9;
+            border-color: #0062cc;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="mb-4  text-center">
+                <h2 class="font-weight-bold" style="color: var(--blue);" >Book {{ package.title }}</h2>
+                <p class="text-muted">Complete your travel booking</p>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title font-weight-bold">{{ package.title }}</h5>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong><i class="fas fa-map-marker-alt"></i> Destination:</strong> {{ package.destination }}</p>
+                            <p><strong><i class="fas fa-calendar-alt"></i> Duration:</strong> {{ package.duration_days }} days</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong><i class="fas fa-dollar-sign"></i> Price per person:</strong> ${{ package.price }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title font-weight-bold">Booking Details</h5>
+                    <hr>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="id_number_of_people">Number of People</label>
+                            {{ form.number_of_people }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_travel_date">Travel Date</label>
+                            {{ form.travel_date }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_special_requests">Special Requests</label>
+                            {{ form.special_requests }}
+                            <small class="form-text text-muted">Any special requirements or notes for your trip</small>
+                        </div>
+                      <form><script src="https://checkout.razorpay.com/v1/payment-button.js" data-payment_button_id="pl_QejEOzRxfk6Hjj" async> </script> </form>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card booking-summary-card sticky-top" style="top: 20px;">
+                <div class="card-body">
+                    <h5 class="card-title font-weight-bold">Booking Summary</h5>
+                    <hr>
+                    <div id="booking-summary">
+                        <p class="d-flex justify-content-between">
+                            <span>Package:</span>
+                            <span>{{ package.title }}</span>
+                        </p>
+                        <p class="d-flex justify-content-between">
+                            <span>Price per person:</span>
+                            <span>${{ package.price }}</span>
+                        </p>
+                        <p class="d-flex justify-content-between">
+                            <span>Number of people:</span>
+                            <span id="people-count">1</span>
+                        </p>
+                        <hr>
+                        <p class="d-flex justify-content-between font-weight-bold">
+                            <span>Total price:</span>
+                            <span>$<span id="total-price">{{ package.price }}</span></span>
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Font Awesome for icons -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<!-- Bootstrap 4 JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const numberInput = document.querySelector('#id_number_of_people');
+    const peopleCount = document.querySelector('#people-count');
+    const totalPrice = document.querySelector('#total-price');
+    const packagePrice = {{ package.price }};
+
+    numberInput.classList.add('form-control');
+    document.querySelector('#id_travel_date').classList.add('form-control');
+    document.querySelector('#id_special_requests').classList.add('form-control');
+
+    numberInput.addEventListener('input', function() {
+        const people = this.value || 1;
+        peopleCount.textContent = people;
+        totalPrice.textContent = (packagePrice * people).toFixed(2);
+    });
+});
+</script>
+</body>
+</html>
+

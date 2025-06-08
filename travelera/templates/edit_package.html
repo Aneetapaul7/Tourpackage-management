@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4>{% if form.instance.pk %}Edit{% else %}Create New{% endif %} Package</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Title</label>
+                            {{ form.title }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            {{ form.description }}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Destination</label>
+                                {{ form.destination }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Price ($)</label>
+                                {{ form.price }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Duration (days)</label>
+                                {{ form.duration_days }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Expiry Date</label>
+                                {{ form.expiry_date }}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Package Image</label>
+                            {{ form.image }}
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                {% if form.instance.pk %}Update{% else %}Create{% endif %} Package
+                            </button>
+                            <a href="{% if form.instance.pk %}{% url 'vendor_dashboard' %}{% else %}{% url 'package_list' %}{% endif %}"
+                               class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

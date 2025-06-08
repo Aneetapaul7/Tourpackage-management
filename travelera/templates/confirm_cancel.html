@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h4>Cancel Booking</h4>
+                </div>
+                <div class="card-body">
+                    <h5>{{ booking.package.title }}</h5>
+                    <div class="mb-3">
+                        <p><strong>Travel Date:</strong> {{ booking.travel_date|date:"M d, Y" }}</p>
+                        <p><strong>Number of People:</strong> {{ booking.number_of_people }}</p>
+                        <p><strong>Total Price:</strong> ${{ booking.total_price }}</p>
+                    </div>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="alert alert-warning">
+                            <p>Are you sure you want to cancel this booking?</p>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger">Yes, Cancel Booking</button>
+                            <a href="{% url 'user_dashboard' %}" class="btn btn-outline-secondary">No, Go Back</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

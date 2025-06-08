@@ -1,0 +1,203 @@
+{% extends 'logbase.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block css %}
+<style>
+  .registration-container {
+    min-height: calc(100vh - 120px);
+    display: flex;
+    align-items: center;
+    padding-bottom: 60px;
+      padding-top: 40px;
+  }
+  .registration-card {
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin-top: 3rem;
+    margin-bottom: 2rem;
+  }
+  .card-header {
+    font-weight: bold;
+  }
+  #vendorFields {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+    display: none;
+  }
+  .user-type-radios {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 15px;
+  }
+  .user-type-radios .form-check {
+    display: flex;
+    align-items: center;
+  }
+  .error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+  .has-error .form-control {
+    border-color: #dc3545;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container registration-container  ">
+  <div class="row justify-content-center w-100">
+    <div class="col-md-8 col-lg-6">
+      <div class="card registration-card  ">
+        <div class="card-header bg-primary text-white text-center">
+          <h2 class="mb-0">Sign-up</h2>
+        </div>
+        <div class="card-body">
+          {% if messages %}
+          <div class="messages">
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          <form method="post" id="registrationForm" novalidate>
+            {% csrf_token %}
+
+            <!-- Main Form Fields -->
+            <div class="form-group{% if form.username.errors %} has-error{% endif %}">
+              {{ form.username|as_crispy_field }}
+              {% if form.username.errors %}
+                <div class="error-message">{{ form.username.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group{% if form.email.errors %} has-error{% endif %}">
+              {{ form.email|as_crispy_field }}
+              {% if form.email.errors %}
+                <div class="error-message">{{ form.email.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="row">
+              <div class="form-group col-md-6{% if form.first_name.errors %} has-error{% endif %}">
+                {{ form.first_name|as_crispy_field }}
+                {% if form.first_name.errors %}
+                  <div class="error-message">{{ form.first_name.errors }}</div>
+                {% endif %}
+              </div>
+              <div class="form-group col-md-6{% if form.last_name.errors %} has-error{% endif %}">
+                {{ form.last_name|as_crispy_field }}
+                {% if form.last_name.errors %}
+                  <div class="error-message">{{ form.last_name.errors }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="form-group{% if form.phone_number.errors %} has-error{% endif %}">
+              {{ form.phone_number|as_crispy_field }}
+              {% if form.phone_number.errors %}
+                <div class="error-message">{{ form.phone_number.errors }}</div>
+              {% endif %}
+            </div>
+
+            <!-- User Type Selection -->
+            <div class="form-group{% if form.user_type.errors %} has-error{% endif %}">
+              <label>User Type*</label>
+              <div class="user-type-radios">
+                {% for choice in form.user_type %}
+                  <div class="form-check">
+                    {{ choice.tag }}
+                    <label class="form-check-label" for="{{ choice.id_for_label }}">
+                      {{ choice.choice_label }}
+                    </label>
+                  </div>
+                {% endfor %}
+              </div>
+              {% if form.user_type.errors %}
+                <div class="error-message">{{ form.user_type.errors }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Password Fields -->
+            <div class="form-group{% if form.password1.errors %} has-error{% endif %}">
+              {{ form.password1|as_crispy_field }}
+              {% if form.password1.errors %}
+                <div class="error-message">{{ form.password1.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group{% if form.password2.errors %} has-error{% endif %}">
+              {{ form.password2|as_crispy_field }}
+              {% if form.password2.errors %}
+                <div class="error-message">{{ form.password2.errors }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Vendor Fields (Conditional) -->
+            <div id="vendorFields">
+              <h5 class="border-bottom pb-2 text-center">Vendor Information</h5>
+              <div class="form-group{% if vendor_form.company_name.errors %} has-error{% endif %}">
+                {{ vendor_form.company_name|as_crispy_field }}
+                {% if vendor_form.company_name.errors %}
+                  <div class="error-message">{{ vendor_form.company_name.errors }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="form-group text-center mt-4">
+              <button type="submit" class="btn btn-primary px-4 py-2">Sign Up</button>
+            </div>
+
+            <div class="text-center mt-3">
+              <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Show/hide vendor fields based on user type
+    document.querySelectorAll('input[name="user_type"]').forEach(radio => {
+      radio.addEventListener('change', function() {
+        const vendorFields = document.getElementById('vendorFields');
+        if (this.value === 'vendor') {
+          vendorFields.style.display = 'block';
+        } else {
+          vendorFields.style.display = 'none';
+        }
+      });
+    });
+
+    // Initialize visibility on page load
+    const checkedRadio = document.querySelector('input[name="user_type"]:checked');
+    if (checkedRadio && checkedRadio.value === 'vendor') {
+      document.getElementById('vendorFields').style.display = 'block';
+    }
+
+    // Form validation feedback
+    document.querySelectorAll('#registrationForm input').forEach(input => {
+      input.addEventListener('blur', function() {
+        if (this.value === '') {
+          this.classList.add('is-invalid');
+        } else {
+          this.classList.remove('is-invalid');
+        }
+      });
+    });
+  });
+</script>
+{% endblock %}
